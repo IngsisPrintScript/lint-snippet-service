@@ -13,7 +13,12 @@ public class PrintlnNoExpressionArguments implements LintRule {
         String[] lines = code.split("\n");
         for (String s : lines) {
             String line = s.trim();
-            if (!(line.startsWith("println(") && line.length() > 8)) {
+            if (line.isEmpty()) continue;
+            if (!line.startsWith("println(") || !line.endsWith(")")) {
+                return false;
+            }
+            String inside = line.substring(8, line.length() - 1).trim();
+            if (!inside.matches("[a-zA-Z_][a-zA-Z0-9_]*|\".*\"|\\d+")) {
                 return false;
             }
         }

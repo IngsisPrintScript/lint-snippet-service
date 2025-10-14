@@ -51,16 +51,17 @@ public class LintingService {
         return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<Result> evaluate(String content, String ownerId) {
+    public ResponseEntity<List<Result>> evaluate(String content, String ownerId) {
         List<Lint> rules = lintingRepository.findByOwnerIdAndActive(ownerId,true);
+        List<Result> invalidRules = new ArrayList<>();
         for(Lint lint : rules){
             LintRule rule = ruleRegistry.getRule(lint.getName());
             if(rule!=null){
                 if(!rule.apply(content,lint.getDefaultValue())){
-                    return ResponseEntity.ok(new Result(false));
+                   invalidRules.add(new Result(false,rule.getName()));
                 }
             }
         }
-        return ResponseEntity.ok(new Result(true));
+        return ResponseEntity.ok(invalidRules);
     }
 }

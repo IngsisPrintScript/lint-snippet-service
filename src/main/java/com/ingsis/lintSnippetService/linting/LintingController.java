@@ -7,8 +7,7 @@ import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/linting")
@@ -41,9 +40,18 @@ public class LintingController {
     }
 
     @PostMapping("/evaluate")
-    public ResponseEntity<Void> evaluateSnippet(@RequestBody EvaluateSnippet evaluateSnippet){
-        Result result = lintingService.evaluate(evaluateSnippet.content(),evaluateSnippet.ownerId()).getBody();
-        return  ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> evaluateLintingRules(@RequestBody EvaluateSnippet evaluateSnippet){
+        List<Result> result = lintingService.evaluate(evaluateSnippet.content(),evaluateSnippet.ownerId()).getBody();
+        if(result == null || result.isEmpty()){
+            return ResponseEntity.ok(true);
+        }
+        return  ResponseEntity.ok(false);
+    }
+
+    @PostMapping("/evaluate")
+    public ResponseEntity<List<Result>> evaluateSnippet(@RequestBody EvaluateSnippet evaluateSnippet){
+        List<Result> result = lintingService.evaluate(evaluateSnippet.content(),evaluateSnippet.ownerId()).getBody();
+        return ResponseEntity.ok(Objects.requireNonNullElseGet(result, List::of));
     }
 
 }
