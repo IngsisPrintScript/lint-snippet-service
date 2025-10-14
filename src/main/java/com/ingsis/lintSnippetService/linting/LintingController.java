@@ -49,7 +49,7 @@ public class LintingController {
     return ResponseEntity.ok(false);
   }
 
-  @PostMapping("/evaluate")
+  @PostMapping("/evaluate/pass")
   public ResponseEntity<List<Result>> evaluateSnippet(
       @RequestBody EvaluateSnippet evaluateSnippet) {
     List<Result> result =
