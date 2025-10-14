@@ -16,12 +16,6 @@ spring:
       host: localhost
       port: 6379
 
-okta:
-  oauth2:
-    # Replace with the domain of your Auth0 tenant.
-    issuer: ${AUTH0_ISSUER_URI}
-    # Replace with the API Identifier for your Auth0 API.
-    audience: ${AUTH0_AUDIENCE}
 
 azure:
   storage:
