@@ -1,19 +1,16 @@
 package com.ingsis.lintSnippetService.linting;
 
-import com.azure.core.exception.ResourceNotFoundException;
 import com.ingsis.lintSnippetService.linting.dto.CreateLintingDTO;
 import com.ingsis.lintSnippetService.linting.dto.Result;
 import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
 import com.ingsis.lintSnippetService.rules.LintRule;
 import com.ingsis.lintSnippetService.rules.RuleRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class LintingService {
