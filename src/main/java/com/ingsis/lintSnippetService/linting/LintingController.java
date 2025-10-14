@@ -48,7 +48,7 @@ public class LintingController {
         return  ResponseEntity.ok(false);
     }
 
-    @PostMapping("/evaluate")
+    @PostMapping("/evaluate/pass")
     public ResponseEntity<List<Result>> evaluateSnippet(@RequestBody EvaluateSnippet evaluateSnippet){
         List<Result> result = lintingService.evaluate(evaluateSnippet.content(),evaluateSnippet.ownerId()).getBody();
         return ResponseEntity.ok(Objects.requireNonNullElseGet(result, List::of));
