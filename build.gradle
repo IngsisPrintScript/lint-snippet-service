@@ -17,7 +17,16 @@ java {
 
 repositories {
 	mavenCentral()
+	maven {
+		name = "GitHubPackages"
+		url = uri("https://maven.pkg.github.com/austral-ingsis/*")
+		credentials {
+			username = project.findProperty("USERNAME") ?: System.getenv("USERNAME")
+			password = project.findProperty("TOKEN") ?: System.getenv("TOKEN")
+		}
+	}
 }
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
@@ -29,6 +38,11 @@ dependencies {
 
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
+	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.1'
+
+	implementation 'org.austral.ingsis:redis-streams-mvc:0.1.13'
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.2'

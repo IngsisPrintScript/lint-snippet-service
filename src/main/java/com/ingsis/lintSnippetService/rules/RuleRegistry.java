@@ -5,6 +5,8 @@ import com.ingsis.lintSnippetService.rules.rules.PrintlnNoExpressionArguments;
 import com.ingsis.lintSnippetService.rules.rules.ReadInputNoExpressionArgumentsRule;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,6 +21,10 @@ public class RuleRegistry {
   }
 
   public LintRule getRule(String name) {
-    return rules.get(name);
+    try {
+      return rules.get(name);
+    }catch (Exception e){
+      throw new NoSuchElementException("rule not found");
+    }
   }
 }

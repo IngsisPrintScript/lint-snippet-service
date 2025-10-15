@@ -6,6 +6,7 @@ import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
 import com.ingsis.lintSnippetService.rules.LintRule;
 import com.ingsis.lintSnippetService.rules.RuleRegistry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,6 @@ public class LintingService {
         }
       }
     }
-    return ResponseEntity.ok(invalidRules);
+    return ResponseEntity.ok(Collections.unmodifiableList(invalidRules));
   }
 }
