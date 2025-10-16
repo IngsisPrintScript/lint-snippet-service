@@ -19,23 +19,17 @@ public class LintingController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<Void> createLintRule(@RequestBody List<CreateLintingDTO> lintingDTO) {
+  public ResponseEntity<Void> createLintRule(@RequestBody List<CreateLintingDTO> lintingDTO,@RequestParam String ownerId) {
     UUID ymlId = UUID.randomUUID();
-    try {
-      lintingService.saveRules(lintingDTO, ymlId);
+      lintingService.saveRules(lintingDTO, ymlId, ownerId);
       return ResponseEntity.ok().build();
-    } catch (Exception e) {
-      e.printStackTrace();
-      return ResponseEntity.badRequest().build();
-    }
   }
 
   @PutMapping("/update")
-  public ResponseEntity<?> updateLintRule(@RequestBody List<UpdateLintingDTO> updateLintingDTO) {
+  public ResponseEntity<?> updateLintRule(@RequestBody List<UpdateLintingDTO> updateLintingDTO, @RequestParam String ownerId) {
     try {
-      return ResponseEntity.ok(lintingService.updateRule(updateLintingDTO));
+      return ResponseEntity.ok(lintingService.updateRule(updateLintingDTO,ownerId));
     } catch (Exception e) {
-      e.printStackTrace();
       return ResponseEntity.badRequest().build();
     }
   }

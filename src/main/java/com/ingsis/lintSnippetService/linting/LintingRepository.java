@@ -2,6 +2,8 @@ package com.ingsis.lintSnippetService.linting;
 
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +12,6 @@ public interface LintingRepository extends JpaRepository<Lint, UUID> {
   List<Lint> findByOwnerIdAndActive(String ownerId, boolean active);
 
   Lint findByNameAndOwnerId(String name, String ownerId);
+
+  Lint findByOwnerIdAndId(String ownerId, UUID id);
 }
