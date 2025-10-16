@@ -3,12 +3,16 @@ package com.ingsis.lintSnippetService.linting;
 import com.ingsis.lintSnippetService.linting.dto.CreateLintingDTO;
 import com.ingsis.lintSnippetService.linting.dto.Result;
 import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
+import com.ingsis.lintSnippetService.redis.LintRequestConsumer;
 import com.ingsis.lintSnippetService.rules.LintRule;
 import com.ingsis.lintSnippetService.rules.RuleRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,7 @@ public class LintingService {
 
   private final LintingRepository lintingRepository;
   private final RuleRegistry ruleRegistry;
+  private static final Logger logger = LoggerFactory.getLogger(LintingService.class);
 
   public LintingService(RuleRegistry registry, LintingRepository lintingRepository) {
     this.lintingRepository = lintingRepository;
@@ -51,15 +56,23 @@ public class LintingService {
 
   public ResponseEntity<List<Result>> evaluate(String content, String ownerId) {
     List<Lint> rules = lintingRepository.findByOwnerIdAndActive(ownerId, true);
+    logger.info("Found {} active rules for owner {}", rules.size(), ownerId);
+    logger.info("Code to lint {}", content);
     List<Result> invalidRules = new ArrayList<>();
     for (Lint lint : rules) {
       LintRule rule = ruleRegistry.getRule(lint.getName());
-      if (rule != null) {
-        if (!rule.apply(content)) {
-          invalidRules.add(new Result(false, rule.getName()));
-        }
+      if (rule == null) {
+        logger.warn("Rule {} not found in registry", lint.getName());
+        continue;
+      }
+      boolean passed = rule.apply(content);
+      logger.info("Applying rule {} to snippet: {}", rule.getName(), passed ? "PASSED" : "FAILED");
+
+      if (!passed) {
+        invalidRules.add(new Result(false, rule.getName()));
       }
     }
+    logger.info("Lint evaluation completed for owner {}. Invalid rules: {}", ownerId, invalidRules);
     return ResponseEntity.ok(Collections.unmodifiableList(invalidRules));
   }
 }

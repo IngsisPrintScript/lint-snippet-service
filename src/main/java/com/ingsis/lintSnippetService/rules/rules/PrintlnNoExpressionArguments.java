@@ -14,6 +14,9 @@ public class PrintlnNoExpressionArguments implements LintRule {
     for (String s : lines) {
       String line = s.trim();
       if (line.isEmpty()) continue;
+      if (line.endsWith(";")) {
+        line = line.substring(0, line.length() - 1).trim();
+      }
       if (!line.startsWith("println(") || !line.endsWith(")")) {
         return true;
       }
