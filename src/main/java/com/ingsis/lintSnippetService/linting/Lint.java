@@ -12,10 +12,10 @@ public class Lint {
   private UUID id;
 
   @NotBlank private String ownerId;
-  @NotBlank private UUID ymlId;
+  private UUID ymlId;
   @NotBlank private String name;
   @NotBlank private String defaultValue;
-  @NotBlank private boolean active;
+  private boolean active;
 
   public Lint(String ownerId, UUID ymlId, String name, String defaultValue, boolean active) {
     this.ownerId = ownerId;

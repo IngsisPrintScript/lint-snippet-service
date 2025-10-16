@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LintingRepository extends JpaRepository<Lint, UUID> {
-  Lint findByName(String name);
-
   List<Lint> findByOwnerIdAndActive(String ownerId, boolean active);
+
+  Lint findByNameAndOwnerId(String name, String ownerId);
 }

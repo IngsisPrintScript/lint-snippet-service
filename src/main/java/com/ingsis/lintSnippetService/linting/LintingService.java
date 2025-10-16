@@ -26,10 +26,10 @@ public class LintingService {
   public ResponseEntity<Void> saveRules(List<CreateLintingDTO> ruleDTOs, UUID ymlId) {
     List<Lint> lints = new ArrayList<>();
     for (CreateLintingDTO dto : ruleDTOs) {
-      Lint rule = lintingRepository.findByName((dto.name()));
+      Lint rule = lintingRepository.findByNameAndOwnerId(dto.name(), dto.ownerId());
       if (rule == null) {
         rule = new Lint(dto.ownerId(), ymlId, dto.name(), dto.defaultValue(), dto.active());
-        lints.add(rule);
+        if (!lints.contains(rule)){lints.add(rule);}
       }
     }
     lintingRepository.saveAll(lints);
@@ -46,7 +46,7 @@ public class LintingService {
       result.setDefaultValue(dto.value());
       lintingRepository.save(result);
     }
-    return ResponseEntity.badRequest().build();
+    return ResponseEntity.ok().build();
   }
 
   public ResponseEntity<List<Result>> evaluate(String content, String ownerId) {
@@ -55,7 +55,7 @@ public class LintingService {
     for (Lint lint : rules) {
       LintRule rule = ruleRegistry.getRule(lint.getName());
       if (rule != null) {
-        if (!rule.apply(content, lint.getDefaultValue())) {
+        if (!rule.apply(content)) {
           invalidRules.add(new Result(false, rule.getName()));
         }
       }

@@ -25,6 +25,7 @@ public class LintingController {
       lintingService.saveRules(lintingDTO, ymlId);
       return ResponseEntity.ok().build();
     } catch (Exception e) {
+      e.printStackTrace();
       return ResponseEntity.badRequest().build();
     }
   }
@@ -34,6 +35,7 @@ public class LintingController {
     try {
       return ResponseEntity.ok(lintingService.updateRule(updateLintingDTO));
     } catch (Exception e) {
+      e.printStackTrace();
       return ResponseEntity.badRequest().build();
     }
   }

@@ -1,4 +1,4 @@
-package com.ingsis.lintSnippetService.redis.config;
+package com.ingsis.lintSnippetService.redis.redisConfig.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

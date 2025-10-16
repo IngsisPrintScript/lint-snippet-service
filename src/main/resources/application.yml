@@ -16,10 +16,13 @@ spring:
       host: localhost
       port: 6379
 
+#azure:
+#  storage:
+#    connection-string: DefaultEndpointsProtocol=https;AccountName=${AZURE_STORAGE_ACCOUNT_NAME};AccountKey=${AZURE_STORAGE_ACCOUNT_KEY};BlobEndpoint=${AZURE_STORAGE_BLOB_ENDPOINT}
 
-azure:
-  storage:
-    connection-string: DefaultEndpointsProtocol=https;AccountName=${AZURE_STORAGE_ACCOUNT_NAME};AccountKey=${AZURE_STORAGE_ACCOUNT_KEY};BlobEndpoint=${AZURE_STORAGE_BLOB_ENDPOINT}
+server:
+  port: 8081
+  address: 0.0.0.0
 
 redis:
   streams:

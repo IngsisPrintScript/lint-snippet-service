@@ -9,7 +9,7 @@ public class ReadInputNoExpressionArgumentsRule implements LintRule {
   }
 
   @Override
-  public boolean apply(String code, String value) {
+  public boolean apply(String code) {
     String[] lines = code.split("\n");
     for (String rawLine : lines) {
       String line = rawLine.trim();
