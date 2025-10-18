@@ -3,13 +3,12 @@ package com.ingsis.lintSnippetService.linting;
 import com.ingsis.lintSnippetService.linting.dto.CreateLintingDTO;
 import com.ingsis.lintSnippetService.linting.dto.Result;
 import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
-import com.ingsis.lintSnippetService.redis.LintRequestConsumer;
+import com.ingsis.lintSnippetService.redis.dto.LintStatus;
 import com.ingsis.lintSnippetService.rules.LintRule;
 import com.ingsis.lintSnippetService.rules.RuleRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +27,12 @@ public class LintingService {
     this.ruleRegistry = registry;
   }
 
-  public ResponseEntity<Void> saveRules(List<CreateLintingDTO> ruleDTOs, UUID ymlId, String ownerId) {
+  public ResponseEntity<Void> saveRules(List<CreateLintingDTO> ruleDTOs, String ownerId) {
     List<Lint> lints = new ArrayList<>();
     for (CreateLintingDTO dto : ruleDTOs) {
       Lint rule = lintingRepository.findByNameAndOwnerId(dto.name(), ownerId);
       if (rule == null) {
-        rule = new Lint(ownerId, ymlId, dto.name(), dto.defaultValue(), dto.active());
+        rule = new Lint(ownerId, dto.name(), dto.defaultValue(), dto.active());
         logger.info("Created rule {} for owner {}", dto.name(), ownerId);
         if (!lints.contains(rule)){
           lints.add(rule);
@@ -80,7 +79,7 @@ public class LintingService {
       logger.info("Applying rule {} to snippet: {}", rule.getName(), passed ? "PASSED" : "FAILED");
 
       if (!passed) {
-        invalidRules.add(new Result(false, rule.getName()));
+        invalidRules.add(new Result(LintStatus.FAILED, rule.getName()));
       }
     }
     logger.info("Lint evaluation completed for owner {}. Invalid rules: {}", ownerId, invalidRules);

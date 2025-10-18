@@ -5,6 +5,8 @@ import com.ingsis.lintSnippetService.linting.dto.EvaluateSnippet;
 import com.ingsis.lintSnippetService.linting.dto.Result;
 import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
 import java.util.*;
+
+import com.ingsis.lintSnippetService.redis.dto.LintStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +22,7 @@ public class LintingController {
 
   @PostMapping("/create")
   public ResponseEntity<Void> createLintRule(@RequestBody List<CreateLintingDTO> lintingDTO,@RequestParam String ownerId) {
-    UUID ymlId = UUID.randomUUID();
-      lintingService.saveRules(lintingDTO, ymlId, ownerId);
+      lintingService.saveRules(lintingDTO, ownerId);
       return ResponseEntity.ok().build();
   }
 
@@ -35,14 +36,14 @@ public class LintingController {
   }
 
   @PostMapping("/evaluate")
-  public ResponseEntity<Boolean> evaluateLintingRules(
+  public ResponseEntity<LintStatus> evaluateLintingRules(
       @RequestBody EvaluateSnippet evaluateSnippet) {
     List<Result> result =
         lintingService.evaluate(evaluateSnippet.content(), evaluateSnippet.ownerId()).getBody();
     if (result == null || result.isEmpty()) {
-      return ResponseEntity.ok(true);
+      return ResponseEntity.ok(LintStatus.PASSED);
     }
-    return ResponseEntity.ok(false);
+    return ResponseEntity.ok(LintStatus.FAILED);
   }
 
   @PostMapping("/evaluate/pass")

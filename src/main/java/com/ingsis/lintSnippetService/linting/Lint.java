@@ -16,7 +16,7 @@ public class Lint {
   @NotBlank private String defaultValue;
   private boolean active;
 
-  public Lint(String ownerId, UUID ymlId, String name, String defaultValue, boolean active) {
+  public Lint(String ownerId, String name, String defaultValue, boolean active) {
     this.ownerId = ownerId;
     this.name = name;
     this.defaultValue = defaultValue;
