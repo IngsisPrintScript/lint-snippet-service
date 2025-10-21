@@ -1,4 +1,5 @@
 package com.ingsis.lintSnippetService.linting.dto;
 
-public record Result(boolean evaluated,String nameRule) {
-}
+import com.ingsis.lintSnippetService.redis.dto.LintStatus;
+
+public record Result(LintStatus evaluated, String nameRule) {}
