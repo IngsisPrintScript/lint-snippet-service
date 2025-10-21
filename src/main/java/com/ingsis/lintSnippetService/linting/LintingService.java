@@ -9,7 +9,6 @@ import com.ingsis.lintSnippetService.rules.RuleRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +33,10 @@ public class LintingService {
       if (rule == null) {
         rule = new Lint(ownerId, dto.name(), dto.defaultValue(), dto.active());
         logger.info("Created rule {} for owner {}", dto.name(), ownerId);
-        if (!lints.contains(rule)){
+        if (!lints.contains(rule)) {
           lints.add(rule);
-        }logger.info("Rule {} already declared for owner {}", rule, ownerId);
+        }
+        logger.info("Rule {} already declared for owner {}", rule, ownerId);
       }
       logger.info("rule {} already exists for owner {}", dto.name(), ownerId);
     }
@@ -47,10 +47,8 @@ public class LintingService {
 
   public ResponseEntity<?> updateRule(List<UpdateLintingDTO> updateLintingDTO, String ownerId) {
     for (UpdateLintingDTO dto : updateLintingDTO) {
-      Lint result =
-          lintingRepository
-              .findByOwnerIdAndId(ownerId,dto.lintId());
-      if(result == null){
+      Lint result = lintingRepository.findByOwnerIdAndId(ownerId, dto.lintId());
+      if (result == null) {
         logger.info("Rule {} not found for ownerId {}", dto.lintId(), ownerId);
         return ResponseEntity.badRequest().body(dto.lintId() + " not found");
       }

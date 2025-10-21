@@ -4,9 +4,8 @@ import com.ingsis.lintSnippetService.linting.dto.CreateLintingDTO;
 import com.ingsis.lintSnippetService.linting.dto.EvaluateSnippet;
 import com.ingsis.lintSnippetService.linting.dto.Result;
 import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
-import java.util.*;
-
 import com.ingsis.lintSnippetService.redis.dto.LintStatus;
+import java.util.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,15 +20,17 @@ public class LintingController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<Void> createLintRule(@RequestBody List<CreateLintingDTO> lintingDTO,@RequestParam String ownerId) {
-      lintingService.saveRules(lintingDTO, ownerId);
-      return ResponseEntity.ok().build();
+  public ResponseEntity<Void> createLintRule(
+      @RequestBody List<CreateLintingDTO> lintingDTO, @RequestParam String ownerId) {
+    lintingService.saveRules(lintingDTO, ownerId);
+    return ResponseEntity.ok().build();
   }
 
   @PutMapping("/update")
-  public ResponseEntity<?> updateLintRule(@RequestBody List<UpdateLintingDTO> updateLintingDTO, @RequestParam String ownerId) {
+  public ResponseEntity<?> updateLintRule(
+      @RequestBody List<UpdateLintingDTO> updateLintingDTO, @RequestParam String ownerId) {
     try {
-      return ResponseEntity.ok(lintingService.updateRule(updateLintingDTO,ownerId));
+      return ResponseEntity.ok(lintingService.updateRule(updateLintingDTO, ownerId));
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
