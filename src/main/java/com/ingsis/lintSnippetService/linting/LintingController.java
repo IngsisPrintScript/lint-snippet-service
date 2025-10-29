@@ -1,9 +1,7 @@
 package com.ingsis.lintSnippetService.linting;
 
-import com.ingsis.lintSnippetService.linting.dto.CreateLintingDTO;
-import com.ingsis.lintSnippetService.linting.dto.EvaluateSnippet;
-import com.ingsis.lintSnippetService.linting.dto.Result;
-import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
+import com.ingsis.lintSnippetService.linting.dto.*;
+
 import java.util.*;
 
 import com.ingsis.lintSnippetService.redis.dto.LintStatus;
@@ -52,5 +50,10 @@ public class LintingController {
     List<Result> result =
         lintingService.evaluate(evaluateSnippet.content(), evaluateSnippet.ownerId()).getBody();
     return ResponseEntity.ok(Objects.requireNonNullElseGet(result, List::of));
+  }
+
+  @GetMapping()
+  public ResponseEntity<List<GetLintRule>> getAllRules(@RequestParam String ownerId) {
+    return lintingService.getAllByOwner(ownerId);
   }
 }

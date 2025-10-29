@@ -1,6 +1,7 @@
 package com.ingsis.lintSnippetService.linting;
 
 import com.ingsis.lintSnippetService.linting.dto.CreateLintingDTO;
+import com.ingsis.lintSnippetService.linting.dto.GetLintRule;
 import com.ingsis.lintSnippetService.linting.dto.Result;
 import com.ingsis.lintSnippetService.linting.dto.UpdateLintingDTO;
 import com.ingsis.lintSnippetService.redis.dto.LintStatus;
@@ -9,6 +10,7 @@ import com.ingsis.lintSnippetService.rules.RuleRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,5 +86,33 @@ public class LintingService {
     }
     logger.info("Lint evaluation completed for owner {}. Invalid rules: {}", ownerId, invalidRules);
     return ResponseEntity.ok(Collections.unmodifiableList(invalidRules));
+  }
+
+  public ResponseEntity<List<GetLintRule>> getAllByOwner(String ownerId) {
+    logger.info("Fetching all linting rules for ownerId {}", ownerId);
+
+    try {
+      List<Lint> rules = lintingRepository.findByOwnerId(ownerId);
+
+      if (rules == null || rules.isEmpty()) {
+        logger.info("No linting rules found for ownerId {}", ownerId);
+        return ResponseEntity.ok(Collections.emptyList());
+      }
+      logger.info("Found {} linting rules for ownerId {}", rules.size(), ownerId);
+      List<GetLintRule> lintRules = List.copyOf(convertToLintRule(rules));
+      return ResponseEntity.ok(Collections.unmodifiableList(lintRules));
+
+    } catch (Exception e) {
+      logger.error("Error retrieving linting rules for ownerId {}: {}", ownerId, e.getMessage());
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  public List<GetLintRule> convertToLintRule(List<Lint> lintRules) {
+    List<GetLintRule> rules = new ArrayList<>();
+    for(Lint lint : lintRules){
+      rules.add(new GetLintRule(lint.getId(),lint.getName(),lint.isActive()));
+    }
+    return rules;
   }
 }
