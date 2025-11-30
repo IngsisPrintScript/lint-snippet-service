@@ -12,4 +12,6 @@ public interface LintingRepository extends JpaRepository<Lint, UUID> {
   Lint findByNameAndOwnerId(String name, String ownerId);
 
   Lint findByOwnerIdAndId(String ownerId, UUID id);
+
+  List<Lint> findByOwnerId(String ownerId);
 }
