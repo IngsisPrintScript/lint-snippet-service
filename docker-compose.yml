@@ -12,16 +12,24 @@ services:
       - .env
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - snippet-net
 
-  snippet-service:
+  linting-service:
     build: .
-    container_name: linter-service
+    container_name: linting-service
     ports:
       - "${API_PORT}:8081"
     env_file:
       - .env
     depends_on:
       - db
+    networks:
+      - snippet-net
+
+networks:
+  snippet-net:
+    external: true
 
 volumes:
   db:
