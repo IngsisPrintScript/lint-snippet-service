@@ -2,9 +2,11 @@ package com.ingsis.lintSnippetService.linting;
 
 import com.ingsis.lintSnippetService.linting.dto.*;
 import com.ingsis.lintSnippetService.redis.dto.LintStatus;
-import java.util.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/linting")
