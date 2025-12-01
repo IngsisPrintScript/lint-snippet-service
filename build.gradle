@@ -59,7 +59,14 @@ tasks.named('test') {
 spotless {
     java {
         target 'src/**/*.java'
-        googleJavaFormat('1.17.0')
-        // Puedes agregar reglas adicionales aquí si lo deseas
+        eclipse().configFile("config/eclipse-java-style.xml")
+        importOrder()
+        removeUnusedImports()
+        lineEndings = 'UNIX'
     }
+}
+
+checkstyle {
+    toolVersion = '10.12.0'
+    configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
 }
