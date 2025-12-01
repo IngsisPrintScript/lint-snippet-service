@@ -5,7 +5,6 @@ FROM gradle:8.4-jdk21-alpine AS builder
 
 WORKDIR /home/gradle/project
 
-# Copiar todo primero (no importa cachear por ahora)
 COPY . .
 
 # Construir el .jar (Gradle usará las credenciales de GitHub Actions)
