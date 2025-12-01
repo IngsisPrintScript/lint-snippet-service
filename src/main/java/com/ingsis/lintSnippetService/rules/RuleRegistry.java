@@ -12,20 +12,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class RuleRegistry {
 
-  private final Map<String, LintRule> rules = new HashMap<>();
+    private final Map<String, LintRule> rules = new HashMap<>();
 
-  public RuleRegistry() {
-    rules.put("printlnNoExpressionArguments", new PrintlnNoExpressionArguments());
-    rules.put("readInputNoExpressionArguments", new ReadInputNoExpressionArgumentsRule());
-    rules.put("snakeCase", new SnakeCaseRule());
-    rules.put("camelCase", new CamelCaseRule());
-  }
-
-  public LintRule getRule(String name) {
-    try {
-      return rules.get(name);
-    } catch (Exception e) {
-      throw new NoSuchElementException("rule not found");
+    public RuleRegistry() {
+        rules.put("printlnNoExpressionArguments", new PrintlnNoExpressionArguments());
+        rules.put("readInputNoExpressionArguments", new ReadInputNoExpressionArgumentsRule());
+        rules.put("snakeCase", new SnakeCaseRule());
+        rules.put("camelCase", new CamelCaseRule());
     }
-  }
+
+    public LintRule getRule(String name) {
+        try {
+            return rules.get(name);
+        } catch (Exception e) {
+            throw new NoSuchElementException("rule not found");
+        }
+    }
 }

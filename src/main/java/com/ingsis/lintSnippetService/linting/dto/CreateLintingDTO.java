@@ -1,3 +1,4 @@
 package com.ingsis.lintSnippetService.linting.dto;
 
-public record CreateLintingDTO(String name, String defaultValue, boolean active) {}
+public record CreateLintingDTO(String name, String defaultValue, boolean active) {
+}

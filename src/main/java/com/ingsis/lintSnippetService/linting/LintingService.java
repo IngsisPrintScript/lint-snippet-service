@@ -18,98 +18,98 @@ import org.springframework.stereotype.Service;
 @Service
 public class LintingService {
 
-  private final LintingRepository lintingRepository;
-  private final RuleRegistry ruleRegistry;
-  private static final Logger logger = LoggerFactory.getLogger(LintingService.class);
+    private final LintingRepository lintingRepository;
+    private final RuleRegistry ruleRegistry;
+    private static final Logger logger = LoggerFactory.getLogger(LintingService.class);
 
-  public LintingService(RuleRegistry registry, LintingRepository lintingRepository) {
-    this.lintingRepository = lintingRepository;
-    this.ruleRegistry = registry;
-  }
+    public LintingService(RuleRegistry registry, LintingRepository lintingRepository) {
+        this.lintingRepository = lintingRepository;
+        this.ruleRegistry = registry;
+    }
 
-  public ResponseEntity<Void> saveRules(List<CreateLintingDTO> ruleDTOs, String ownerId) {
-    List<Lint> lints = new ArrayList<>();
-    for (CreateLintingDTO dto : ruleDTOs) {
-      Lint rule = lintingRepository.findByNameAndOwnerId(dto.name(), ownerId);
-      if (rule == null) {
-        rule = new Lint(ownerId, dto.name(), dto.defaultValue(), dto.active());
-        logger.info("Created rule {} for owner {}", dto.name(), ownerId);
-        if (!lints.contains(rule)) {
-          lints.add(rule);
+    public ResponseEntity<Void> saveRules(List<CreateLintingDTO> ruleDTOs, String ownerId) {
+        List<Lint> lints = new ArrayList<>();
+        for (CreateLintingDTO dto : ruleDTOs) {
+            Lint rule = lintingRepository.findByNameAndOwnerId(dto.name(), ownerId);
+            if (rule == null) {
+                rule = new Lint(ownerId, dto.name(), dto.defaultValue(), dto.active());
+                logger.info("Created rule {} for owner {}", dto.name(), ownerId);
+                if (!lints.contains(rule)) {
+                    lints.add(rule);
+                }
+                logger.info("Rule {} already declared for owner {}", rule, ownerId);
+            }
+            logger.info("rule {} already exists for owner {}", dto.name(), ownerId);
         }
-        logger.info("Rule {} already declared for owner {}", rule, ownerId);
-      }
-      logger.info("rule {} already exists for owner {}", dto.name(), ownerId);
+        lintingRepository.saveAll(lints);
+        logger.info("Saving {} rules for owner {}", lints.size(), ownerId);
+        return ResponseEntity.ok().build();
     }
-    lintingRepository.saveAll(lints);
-    logger.info("Saving {} rules for owner {}", lints.size(), ownerId);
-    return ResponseEntity.ok().build();
-  }
 
-  public ResponseEntity<?> updateRule(List<UpdateLintingDTO> updateLintingDTO, String ownerId) {
-    for (UpdateLintingDTO dto : updateLintingDTO) {
-      Lint result = lintingRepository.findByOwnerIdAndId(ownerId, dto.lintId());
-      if (result == null) {
-        logger.info("Rule {} not found for ownerId {}", dto.lintId(), ownerId);
-        return ResponseEntity.badRequest().body(dto.lintId() + " not found");
-      }
-      result.setActive(dto.active());
-      logger.info("{} rule", dto.active() ? "Enabled" : "Disabled");
-      result.setDefaultValue(dto.value());
-      logger.info("Updated value to {} for ownerId {}", dto.value(), ownerId);
-      lintingRepository.save(result);
-      logger.info("Updated rule {} for ownerId {}", dto.lintId(), ownerId);
+    public ResponseEntity<?> updateRule(List<UpdateLintingDTO> updateLintingDTO, String ownerId) {
+        for (UpdateLintingDTO dto : updateLintingDTO) {
+            Lint result = lintingRepository.findByOwnerIdAndId(ownerId, dto.lintId());
+            if (result == null) {
+                logger.info("Rule {} not found for ownerId {}", dto.lintId(), ownerId);
+                return ResponseEntity.badRequest().body(dto.lintId() + " not found");
+            }
+            result.setActive(dto.active());
+            logger.info("{} rule", dto.active() ? "Enabled" : "Disabled");
+            result.setDefaultValue(dto.value());
+            logger.info("Updated value to {} for ownerId {}", dto.value(), ownerId);
+            lintingRepository.save(result);
+            logger.info("Updated rule {} for ownerId {}", dto.lintId(), ownerId);
+        }
+        return ResponseEntity.ok().build();
     }
-    return ResponseEntity.ok().build();
-  }
 
-  public ResponseEntity<List<Result>> evaluate(String content, String ownerId) {
-    logger.info("Code to lint {}", content);
-    List<Lint> rules = lintingRepository.findByOwnerIdAndActive(ownerId, true);
-    logger.info("Found {} active rules for owner {}", rules.size(), ownerId);
-    List<Result> invalidRules = new ArrayList<>();
-    for (Lint lint : rules) {
-      LintRule rule = ruleRegistry.getRule(lint.getName());
-      if (rule == null) {
-        logger.warn("Rule {} not found in registry", lint.getName());
-        continue;
-      }
-      boolean passed = rule.apply(content);
-      logger.info("Applying rule {} to snippet: {}", rule.getName(), passed ? "PASSED" : "FAILED");
+    public ResponseEntity<List<Result>> evaluate(String content, String ownerId) {
+        logger.info("Code to lint {}", content);
+        List<Lint> rules = lintingRepository.findByOwnerIdAndActive(ownerId, true);
+        logger.info("Found {} active rules for owner {}", rules.size(), ownerId);
+        List<Result> invalidRules = new ArrayList<>();
+        for (Lint lint : rules) {
+            LintRule rule = ruleRegistry.getRule(lint.getName());
+            if (rule == null) {
+                logger.warn("Rule {} not found in registry", lint.getName());
+                continue;
+            }
+            boolean passed = rule.apply(content);
+            logger.info("Applying rule {} to snippet: {}", rule.getName(), passed ? "PASSED" : "FAILED");
 
-      if (!passed) {
-        invalidRules.add(new Result(LintStatus.FAILED, rule.getName()));
-      }
+            if (!passed) {
+                invalidRules.add(new Result(LintStatus.FAILED, rule.getName()));
+            }
+        }
+        logger.info("Lint evaluation completed for owner {}. Invalid rules: {}", ownerId, invalidRules);
+        return ResponseEntity.ok(Collections.unmodifiableList(invalidRules));
     }
-    logger.info("Lint evaluation completed for owner {}. Invalid rules: {}", ownerId, invalidRules);
-    return ResponseEntity.ok(Collections.unmodifiableList(invalidRules));
-  }
 
-  public ResponseEntity<List<GetLintRule>> getAllByOwner(String ownerId) {
-    logger.info("Fetching all linting rules for ownerId {}", ownerId);
+    public ResponseEntity<List<GetLintRule>> getAllByOwner(String ownerId) {
+        logger.info("Fetching all linting rules for ownerId {}", ownerId);
 
-    try {
-      List<Lint> rules = lintingRepository.findByOwnerId(ownerId);
+        try {
+            List<Lint> rules = lintingRepository.findByOwnerId(ownerId);
 
-      if (rules == null || rules.isEmpty()) {
-        logger.info("No linting rules found for ownerId {}", ownerId);
-        return ResponseEntity.ok(Collections.emptyList());
-      }
-      logger.info("Found {} linting rules for ownerId {}", rules.size(), ownerId);
-      List<GetLintRule> lintRules = List.copyOf(convertToLintRule(rules));
-      return ResponseEntity.ok(Collections.unmodifiableList(lintRules));
+            if (rules == null || rules.isEmpty()) {
+                logger.info("No linting rules found for ownerId {}", ownerId);
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+            logger.info("Found {} linting rules for ownerId {}", rules.size(), ownerId);
+            List<GetLintRule> lintRules = List.copyOf(convertToLintRule(rules));
+            return ResponseEntity.ok(Collections.unmodifiableList(lintRules));
 
-    } catch (Exception e) {
-      logger.error("Error retrieving linting rules for ownerId {}: {}", ownerId, e.getMessage());
-      return ResponseEntity.internalServerError().build();
+        } catch (Exception e) {
+            logger.error("Error retrieving linting rules for ownerId {}: {}", ownerId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
-  }
 
-  public List<GetLintRule> convertToLintRule(List<Lint> lintRules) {
-    List<GetLintRule> rules = new ArrayList<>();
-    for (Lint lint : lintRules) {
-      rules.add(new GetLintRule(lint.getId(), lint.getName(), lint.isActive()));
+    public List<GetLintRule> convertToLintRule(List<Lint> lintRules) {
+        List<GetLintRule> rules = new ArrayList<>();
+        for (Lint lint : lintRules) {
+            rules.add(new GetLintRule(lint.getId(), lint.getName(), lint.isActive()));
+        }
+        return rules;
     }
-    return rules;
-  }
 }

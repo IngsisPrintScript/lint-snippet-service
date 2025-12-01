@@ -1,7 +1,7 @@
 package com.ingsis.lintSnippetService.rules;
 
 public interface LintRule {
-  String getName();
+    String getName();
 
-  boolean apply(String code);
+    boolean apply(String code);
 }
