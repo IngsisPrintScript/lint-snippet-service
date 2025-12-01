@@ -7,7 +7,14 @@ on:
     branches: [ "dev", "main" ]
 
 jobs:
-  build:
+  call-cd-prod:
+    uses: IngsisPrintScript/workflows-and-actions/.github/workflows/cd-prod.yaml@main
+    with:
+      java-version: "21"
+    secrets: inherit
+
+  docker:
+    needs: call-cd-prod
     runs-on: ubuntu-latest
     permissions:
       contents: read
