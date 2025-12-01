@@ -1,23 +1,15 @@
-# syntax=docker/dockerfile:1.4
+# syntax=docker/dockerfile:1
 
 # --- Stage 1: build the application ---
 FROM gradle:8.4-jdk21-alpine AS builder
 
 WORKDIR /home/gradle/project
 
-# Copiar sólo archivos necesarios para cachear dependencias
-COPY build.gradle settings.gradle gradlew gradle /home/gradle/project/
+# Copiar todo primero (no importa cachear por ahora)
+COPY . .
 
-# Descargar dependencias usando tu ~/.gradle del HOST
-RUN --mount=type=bind,source=/home/MackyAlimena/.gradle,target=/home/gradle/.gradle \
-    gradle --no-daemon build -x test || return 0
-
-# Copiar el resto del código
-COPY . /home/gradle/project
-
-# Build real, generando el .jar (otra vez montando tus credenciales)
-RUN --mount=type=bind,source=/home/MackyAlimena/.gradle,target=/home/gradle/.gradle \
-    gradle --no-daemon clean bootJar
+# Construir el .jar (Gradle usará las credenciales de GitHub Actions)
+RUN gradle --no-daemon clean bootJar
 
 # --- Stage 2: run the application ---
 FROM eclipse-temurin:21-jre-alpine
