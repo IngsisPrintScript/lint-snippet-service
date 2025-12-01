@@ -54,7 +54,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/ingsisprintscript/linter-service:dev .
+          docker build \
+            --build-arg GITHUB_USER=${{ github.actor }} \
+            --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            -t ghcr.io/ingsisprintscript/linter-service:dev .
 
       - name: Push Docker image
         run: docker push ghcr.io/ingsisprintscript/linter-service:dev
