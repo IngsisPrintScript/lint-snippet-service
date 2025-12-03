@@ -2,9 +2,9 @@ spring:
   application:
     name: ingsis
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://db:5432/linter}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/linter}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -18,8 +18,8 @@ spring:
           issuer-uri: ${AUTH0_ISSUER_URI}
   data:
     redis:
-      host: ${SPRING_REDIS_HOST:snippet_redis}
-      port: ${SPRING_REDIS_PORT:6379}
+      host: ${REDIS_HOST:snippet_redis}
+      port: ${REDIS_PORT:6379}
 
 okta:
   oauth2:
@@ -29,7 +29,7 @@ okta:
     audience: ${AUTH0_AUDIENCE}
 
 server:
-  port: ${API_PORT:8082}
+  port: ${API_PORT:8085}
   address: 0.0.0.0
 
 redis:
