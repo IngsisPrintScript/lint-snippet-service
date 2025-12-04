@@ -51,8 +51,6 @@ dependencies {
 	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     //### PRINTSCRIPT ###//
-    implementation ("PrintScript:com.ingsis.engine")
-    implementation ("PrintScript:com.ingsis.utils")
 }
 
 tasks.register("installGitHooks") {
